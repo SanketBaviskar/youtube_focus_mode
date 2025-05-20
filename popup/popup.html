@@ -1,0 +1,38 @@
+<!--
+Copyright (c) 2024 SSB. All rights reserved.
+
+This code is proprietary and confidential.
+Unauthorized copying, modification, distribution, or use of this code,
+via any medium, is strictly prohibited without express written permission from SSB.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="../icon/ft.png" alt="Logo" class="logo">
+            <h1 class="title">YouTube Focus Mode</h1>
+        </div>
+
+        <div class="control-group">
+            <div class="label-group">
+                <span class="label">Enable Focus Mode</span>
+                <span class="shortcut">Ctrl+Shift+F</span>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="focusModeToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="footer">
+            <p>Remove distractions and stay focused on content</p>
+        </div>
+    </div>
+    <script src="popup.js"></script>
+</body>
+</html>
