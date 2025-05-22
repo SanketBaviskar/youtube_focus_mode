@@ -1,9 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
     const toggle = document.getElementById('focusModeToggle');
+    const label = document.getElementById('focusLabel');
 
     // Get the current state from storage
     chrome.storage.local.get(['focusMode'], (result) => {
-        toggle.checked = result.focusMode || false;
+        const isactive = result.focusMode || false;
+        toggle.checked = isActive;
+        label.textContent = isActive ? "Disable Focus Mode" : "Enable Focus Mode";
     });
 
     // Toggle focus mode on change
@@ -11,27 +14,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const isActive = toggle.checked;
 
         // Save state
-        chrome.storage.local.set({ focusMode: isActive });
-
-        // Try to update all YouTube tabs
-        try {
-            if (chrome.tabs) {
-                chrome.tabs.query({url: "*://*.youtube.com/*"}, (tabs) => {
+        chrome.storage.local.set({ focusMode: isActive }, () => {
+            try {
+                chrome.tabs.query({ url: "*://*.youtube.com/watch*" }, (tabs) => {
                     tabs.forEach(tab => {
-                        chrome.tabs.sendMessage(tab.id, { focusMode: isActive }).catch((err) => {
-                            // Ignore "Could not establish connection" errors
-                            if (!err.message.includes("Could not establish connection")) {
-                                console.error('Error sending message to tab:', err);
-                            }
+                        // Inject content script just in case it's not already loaded
+                        chrome.scripting.executeScript({
+                            target: { tabId: tab.id },
+                            files: ["content.js"]
+                        }, () => {
+                            chrome.tabs.sendMessage(tab.id, { focusMode: isActive }).catch((err) => {
+                                if (!err.message.includes("Could not establish connection")) {
+                                    console.error('Error sending message to tab:', err);
+                                }
+                            });
                         });
                     });
                 });
-            } else {
-                // Fallback: send a runtime message (content script should listen for this)
-                chrome.runtime.sendMessage({ focusMode: isActive });
+            } catch (e) {
+                console.error('Error updating tabs:', e);
             }
-        } catch (e) {
-            console.error('Error updating tabs:', e);
-        }
+        });
     });
+});
 });
