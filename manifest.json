@@ -1,43 +1,39 @@
 {
-    "manifest_version": 3,
-    "name": "YouTube Focus Mode",
-    "version": "1.1",
-    "description": "Hides YouTube distractions and allows you to focus on the video.",
-    "background": {
-        "service_worker": "background.js"
-    },
-    "permissions": ["storage", "commands", "tabs"],
-    "icons": {
-        "16": "icon/ft.png",
-        "48": "icon/ft.png",
-        "128": "icon/ft.png"
-    },
-    "commands": {
-        "toggle-focus-mode": {
-            "suggested_key": {
-                "default": "Ctrl+Shift+F",
-                "mac": "Command+Shift+F"
-            },
-            "description": "Toggle Focus Mode"
-        }
-    },
-    "action": {
-        "default_popup": "popup/popup.html",
-        "default_icon": {
-            "16": "icon/ft.png",
-            "48": "icon/ft.png",
-            "128": "icon/ft.png"
-        }
-    },
-    "content_scripts": [
-        {
-            "matches": [
-                "*://*.youtube.com/watch*"
-            ],
-            "js": [
-                "content.js"
-            ],
-            "run_at": "document_end"
-        }
-    ]
+	"manifest_version": 3,
+	"name": "YouTube Focus Mode",
+	"version": "1.1",
+	"description": "Hides YouTube distractions and allows you to focus on the video.",
+	"background": {
+		"service_worker": "background.js"
+	},
+	"permissions": ["storage", "commands", "tabs"],
+	"icons": {
+		"16": "icon/ft.png",
+		"48": "icon/ft.png",
+		"128": "icon/ft.png"
+	},
+	"commands": {
+		"toggle-focus-mode": {
+			"suggested_key": {
+				"default": "Ctrl+Shift+F",
+				"mac": "Command+Shift+F"
+			},
+			"description": "Toggle Focus Mode"
+		}
+	},
+	"action": {
+		"default_popup": "popup/popup.html",
+		"default_icon": {
+			"16": "icon/ft.png",
+			"48": "icon/ft.png",
+			"128": "icon/ft.png"
+		}
+	},
+	"content_scripts": [
+		{
+			"matches": ["*://*.youtube.com/*"],
+			"js": ["content.js"],
+			"run_at": "document_end"
+		}
+	]
 }

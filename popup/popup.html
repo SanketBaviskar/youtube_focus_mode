@@ -7,32 +7,86 @@ via any medium, is strictly prohibited without express written permission from S
 -->
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="popup.css">
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <img src="../icon/ft.png" alt="Logo" class="logo">
-            <h1 class="title">YouTube Focus Mode</h1>
-        </div>
+	<head>
+		<meta charset="UTF-8" />
+		<link rel="stylesheet" href="popup.css" />
+	</head>
+	<body>
+		<div class="container">
+			<div class="header">
+				<img src="../icon/ft.png" alt="Logo" class="logo" />
+				<h1 class="title">YouTube Focus Mode</h1>
+			</div>
 
-        <div class="control-group">
-            <div class="label-group">
-                <span class="label">Enable Focus Mode</span>
-                <span class="shortcut">Ctrl+Shift+F</span>
-            </div>
-            <label class="switch">
-                <input type="checkbox" id="focusModeToggle">
-                <span class="slider"></span>
-            </label>
-        </div>
+			<div class="control-group">
+				<div class="label-group">
+					<span class="label">Focus Mode (Master)</span>
+					<span class="shortcut">Ctrl+Shift+F</span>
+				</div>
+				<label class="switch">
+					<input type="checkbox" id="focusModeToggle" />
+					<span class="slider"></span>
+				</label>
+			</div>
 
-        <div class="footer">
-            <p>Remove distractions and stay focused on content</p>
-        </div>
-    </div>
-    <script src="popup.js"></script>
-</body>
+			<div class="divider"></div>
+
+			<div class="filters-section">
+				<h3>Filters</h3>
+
+				<div class="control-group small">
+					<span class="label">Hide Comments</span>
+					<label class="switch small">
+						<input type="checkbox" id="hideCommentsToggle" />
+						<span class="slider round"></span>
+					</label>
+				</div>
+
+				<div class="control-group small">
+					<span class="label">Hide Suggested Videos</span>
+					<label class="switch small">
+						<input type="checkbox" id="hideSuggestedToggle" />
+						<span class="slider round"></span>
+					</label>
+				</div>
+
+				<div class="control-group small">
+					<span class="label">Hide Sidebar</span>
+					<label class="switch small">
+						<input type="checkbox" id="hideSidebarToggle" />
+						<span class="slider round"></span>
+					</label>
+				</div>
+
+				<div class="control-group small">
+					<span class="label">Hide Home Feed</span>
+					<label class="switch small">
+						<input type="checkbox" id="hideRecommendationsToggle" />
+						<span class="slider round"></span>
+					</label>
+				</div>
+
+				<div class="control-group small">
+					<span class="label">Hide Video Details</span>
+					<label class="switch small">
+						<input type="checkbox" id="hideVideoDetailsToggle" />
+						<span class="slider round"></span>
+					</label>
+				</div>
+
+				<div class="control-group small">
+					<span class="label">Hide Search Bar</span>
+					<label class="switch small">
+						<input type="checkbox" id="hideSearchBarToggle" />
+						<span class="slider round"></span>
+					</label>
+				</div>
+			</div>
+
+			<div class="footer">
+				<p>Remove distractions and stay focused on content</p>
+			</div>
+		</div>
+		<script src="popup.js"></script>
+	</body>
 </html>
