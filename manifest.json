@@ -1,7 +1,7 @@
 {
 	"manifest_version": 3,
 	"name": "YouTube Focus Mode",
-	"version": "1.1",
+	"version": "1.2",
 	"description": "Hides YouTube distractions and allows you to focus on the video.",
 	"background": {
 		"service_worker": "background.js"
