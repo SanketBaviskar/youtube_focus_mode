@@ -1,0 +1,90 @@
+/*
+ * YouTube Focus Mode styles.
+ *
+ * Every rule is switched on by a data attribute that content.js sets on
+ * <html> from the saved settings (for example data-ytfm-hide-comments).
+ * Attributes on <html> are left alone by YouTube's single-page navigation,
+ * and this file is injected at document_start, so hidden sections never
+ * flash on screen while the page loads.
+ *
+ * Watch-page rules are scoped to the watch layout because YouTube reuses
+ * ids such as #secondary and #meta on other pages (the History page keeps
+ * its search box in #secondary, search results keep titles in #meta).
+ */
+
+/* ---------- Hide Comments ---------- */
+html[data-ytfm-hide-comments] ytd-comments,
+html[data-ytfm-hide-comments] :is(ytd-watch-flexy, ytd-watch-grid) #comments,
+html[data-ytfm-hide-comments] #comment-teaser,
+html[data-ytfm-hide-comments] ytd-engagement-panel-section-list-renderer[target-id="engagement-panel-comments-section"] {
+	display: none !important;
+}
+
+/* ---------- Hide Suggested Videos ---------- */
+html[data-ytfm-hide-suggested] :is(ytd-watch-flexy, ytd-watch-grid) #secondary,
+html[data-ytfm-hide-suggested] :is(ytd-watch-flexy, ytd-watch-grid) #related,
+html[data-ytfm-hide-suggested] ytd-watch-next-secondary-results-renderer,
+html[data-ytfm-hide-suggested] #movie_player .html5-endscreen,
+html[data-ytfm-hide-suggested] #movie_player .ytp-fullscreen-grid-stills-container {
+	display: none !important;
+}
+
+/* Keep the video centred once the right-hand column is gone. */
+html[data-ytfm-hide-suggested] ytd-watch-flexy #columns {
+	justify-content: center !important;
+}
+
+/* ---------- Hide Sidebar (left navigation) ---------- */
+html[data-ytfm-hide-sidebar] #guide,
+html[data-ytfm-hide-sidebar] tp-yt-app-drawer#guide,
+html[data-ytfm-hide-sidebar] ytd-guide-renderer,
+html[data-ytfm-hide-sidebar] ytd-mini-guide-renderer,
+html[data-ytfm-hide-sidebar] ytd-masthead #guide-button {
+	display: none !important;
+}
+
+/* YouTube indents the page to make room for the guide; remove the gap. */
+html[data-ytfm-hide-sidebar] ytd-app[guide-persistent-and-visible] ytd-page-manager#page-manager,
+html[data-ytfm-hide-sidebar] ytd-app[mini-guide-visible] ytd-page-manager#page-manager,
+html[data-ytfm-hide-sidebar] ytd-playlist-sidebar-renderer,
+html[data-ytfm-hide-sidebar] ytd-playlist-header-renderer {
+	margin-left: 0 !important;
+	left: 0 !important;
+}
+
+/* ---------- Hide Home Feed ---------- */
+html[data-ytfm-hide-recommendations] ytd-browse[page-subtype="home"] {
+	display: none !important;
+}
+
+/* ---------- Hide Video Details ---------- */
+/* Title, channel row, like/share buttons, description, and the product
+   shelf under the video. The video-primary/secondary-info renderers are
+   YouTube's older layout, which some accounts still get. */
+html[data-ytfm-hide-details] ytd-watch-metadata,
+html[data-ytfm-hide-details] ytd-video-primary-info-renderer,
+html[data-ytfm-hide-details] ytd-video-secondary-info-renderer,
+html[data-ytfm-hide-details] :is(ytd-watch-flexy, ytd-watch-grid) ytd-merch-shelf-renderer,
+html[data-ytfm-hide-details] :is(ytd-watch-flexy, ytd-watch-grid) #merch-shelf {
+	display: none !important;
+}
+
+/* ---------- Hide Search Bar ---------- */
+/* visibility (not display) keeps the logo and account buttons in place. */
+html[data-ytfm-hide-search] ytd-masthead #center,
+html[data-ytfm-hide-search] ytd-masthead yt-searchbox,
+html[data-ytfm-hide-search] ytd-masthead ytd-searchbox,
+html[data-ytfm-hide-search] ytd-masthead #search-button-narrow {
+	visibility: hidden !important;
+}
+
+/* ---------- Focus Mode (master) ---------- */
+/* The master switch also turns on every filter above; on top of that it
+   removes the top bar entirely. */
+html[data-ytfm-focus-mode] #masthead-container {
+	display: none !important;
+}
+
+html[data-ytfm-focus-mode] ytd-page-manager#page-manager {
+	margin-top: 0 !important;
+}

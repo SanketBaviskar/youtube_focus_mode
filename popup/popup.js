@@ -20,7 +20,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	});
 
-	// Helper to save and broadcast settings
+	// Save settings. Open YouTube tabs pick the change up through
+	// chrome.storage.onChanged in content.js, so no messaging is needed.
 	function updateSettings() {
 		const settings = {};
 		for (const [key, element] of Object.entries(toggles)) {
@@ -28,23 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				settings[key] = element.checked;
 			}
 		}
-
-		// Save to storage
 		chrome.storage.local.set(settings);
-
-		// Broadcast to tabs
-		chrome.tabs.query({ url: "*://*.youtube.com/*" }, (tabs) => {
-			tabs.forEach((tab) => {
-				chrome.tabs
-					.sendMessage(tab.id, {
-						type: "UPDATE_SETTINGS",
-						settings: settings,
-					})
-					.catch((err) => {
-						// Ignore connection errors
-					});
-			});
-		});
 	}
 
 	// Attach listeners

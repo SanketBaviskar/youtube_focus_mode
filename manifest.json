@@ -1,12 +1,13 @@
 {
 	"manifest_version": 3,
 	"name": "YouTube Focus Mode",
-	"version": "1.2",
+	"version": "1.3",
 	"description": "Hides YouTube distractions and allows you to focus on the video.",
 	"background": {
 		"service_worker": "background.js"
 	},
-	"permissions": ["storage", "commands", "tabs"],
+	"permissions": ["storage", "scripting"],
+	"host_permissions": ["*://*.youtube.com/*"],
 	"icons": {
 		"16": "icon/ft.png",
 		"48": "icon/ft.png",
@@ -32,8 +33,9 @@
 	"content_scripts": [
 		{
 			"matches": ["*://*.youtube.com/*"],
+			"css": ["focus.css"],
 			"js": ["content.js"],
-			"run_at": "document_end"
+			"run_at": "document_start"
 		}
 	]
 }
