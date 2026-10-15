@@ -110,6 +110,15 @@ body {
 	color: #ccc;
 }
 
+.control-group.small .label-group {
+	gap: 2px;
+}
+
+.hint {
+	font-size: 11px;
+	color: #888;
+}
+
 /* Modern Toggle Switch */
 .switch {
 	position: relative;
