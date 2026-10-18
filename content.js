@@ -12,85 +12,31 @@
 		hideSearchBar: "data-ytfm-hide-search",
 	};
 
-	// Remembers that we (not the user) switched YouTube into theater mode, so
-	// turning the filter off can switch it back. YouTube itself remembers
-	// theater mode across page loads, so this has to survive reloads too.
-	const THEATER_FLAG = "theaterSetByFocusMode";
-	const SYNC_MARK = "data-ytfm-theater-sync";
-
 	const root = document.documentElement;
-	let wantTheater = false;
-	let theaterIsOurs = false;
-	let settingsLoaded = false;
 
 	function apply(settings) {
+		let changed = false;
 		for (const [key, attribute] of Object.entries(ATTRIBUTES)) {
 			if (!(key in settings)) continue;
-			root.toggleAttribute(attribute, Boolean(settings[key]));
+			const on = Boolean(settings[key]);
+			if (root.hasAttribute(attribute) === on) continue;
+			root.toggleAttribute(attribute, on);
+			changed = true;
 		}
-		if ("hideSuggested" in settings) {
-			wantTheater = Boolean(settings.hideSuggested);
-			syncTheater();
-		}
+		if (changed) refreshPlayerSize();
 	}
 
-	function setTheaterIsOurs(value) {
-		theaterIsOurs = value;
-		if (value) chrome.storage.local.set({ [THEATER_FLAG]: true });
-		else chrome.storage.local.remove(THEATER_FLAG);
-	}
-
-	// With suggestions hidden, put the watch page in YouTube's own theater mode
-	// so the video fills the window. Using YouTube's button (rather than
-	// resizing the player with CSS) keeps working when YouTube rearranges the
-	// page. At most one click per video and setting, so a layout we can't read
-	// never makes us toggle back and forth.
-	let handledKey = null;
-	let retryTimer = null;
-
-	function syncTheater() {
-		clearTimeout(retryTimer);
-		if (!settingsLoaded || location.pathname !== "/watch") return;
-		const key = location.href + "|" + wantTheater;
-		if (key === handledKey) return;
-
-		let tries = 0;
-		const attempt = () => {
-			const watch = document.querySelector("ytd-watch-flexy");
-			const button = document.querySelector("#movie_player .ytp-size-button");
-			if (!watch || !button) {
-				// The player builds its controls after the page shell loads.
-				if (++tries < 40) retryTimer = setTimeout(attempt, 250);
-				return;
-			}
-			handledKey = key;
-			const inTheater = watch.hasAttribute("theater");
-			const enter = wantTheater && !inTheater;
-			const leave = !wantTheater && theaterIsOurs;
-			if (!enter && !leave) return;
-
-			// A second copy of this script can be running in the tab (it is
-			// re-injected after an update). Whoever acts first records it on
-			// <html>, which every copy can see, so the button is pressed once.
-			const [lastWant, lastAt] = (root.getAttribute(SYNC_MARK) || "").split("|");
-			if (lastWant === String(wantTheater) && Date.now() - Number(lastAt) < 2000) return;
-			root.setAttribute(SYNC_MARK, `${wantTheater}|${Date.now()}`);
-
-			if (enter) {
-				button.click();
-				setTheaterIsOurs(true);
-			} else {
-				if (inTheater) button.click();
-				setTheaterIsOurs(false);
-			}
-		};
-		attempt();
+	// YouTube's player only re-measures itself when the window resizes, so
+	// after the layout changes (for example the cinema view in focus.css) let
+	// it know, or the video keeps its old size inside the new box.
+	function refreshPlayerSize() {
+		for (const delay of [50, 400]) {
+			setTimeout(() => window.dispatchEvent(new Event("resize")), delay);
+		}
 	}
 
 	// Initial state. Keys that were never saved count as "off".
-	chrome.storage.local.get([...Object.keys(ATTRIBUTES), THEATER_FLAG], (saved) => {
-		theaterIsOurs = Boolean(saved[THEATER_FLAG]);
-		settingsLoaded = true;
+	chrome.storage.local.get(Object.keys(ATTRIBUTES), (saved) => {
 		const settings = {};
 		for (const key of Object.keys(ATTRIBUTES)) settings[key] = saved[key];
 		apply(settings);
@@ -100,9 +46,6 @@
 	// open YouTube tab picks up changes here without any messaging.
 	chrome.storage.onChanged.addListener((changes, area) => {
 		if (area !== "local") return;
-		if (THEATER_FLAG in changes) {
-			theaterIsOurs = Boolean(changes[THEATER_FLAG].newValue);
-		}
 		const updated = {};
 		for (const key of Object.keys(ATTRIBUTES)) {
 			if (key in changes) updated[key] = changes[key].newValue;
@@ -110,6 +53,26 @@
 		apply(updated);
 	});
 
-	// YouTube swaps pages without reloading; re-check after each navigation.
-	document.addEventListener("yt-navigate-finish", syncTheater);
+	// An earlier test build switched YouTube into theater mode for Hide
+	// Suggested and recorded that under this key. If that happened, switch
+	// theater mode back off once so the cinema view can take over.
+	const OLD_THEATER_FLAG = "theaterSetByFocusMode";
+	chrome.storage.local.get(OLD_THEATER_FLAG, (saved) => {
+		if (!saved[OLD_THEATER_FLAG]) return;
+		let tries = 0;
+		const undoTheater = () => {
+			if (location.pathname !== "/watch") return;
+			const watch = document.querySelector("ytd-watch-flexy");
+			const button = document.querySelector("#movie_player .ytp-size-button");
+			if (!watch || !button) {
+				if (++tries < 40) setTimeout(undoTheater, 250);
+				return;
+			}
+			document.removeEventListener("yt-navigate-finish", undoTheater);
+			chrome.storage.local.remove(OLD_THEATER_FLAG);
+			if (watch.hasAttribute("theater")) button.click();
+		};
+		document.addEventListener("yt-navigate-finish", undoTheater);
+		undoTheater();
+	});
 })();

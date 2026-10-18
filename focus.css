@@ -21,17 +21,75 @@ html[data-ytfm-hide-comments] ytd-engagement-panel-section-list-renderer[target-
 }
 
 /* ---------- Hide Suggested Videos ---------- */
+/* #related holds the recommendations in both watch layouts: the right-hand
+   column in the classic one, the grid under the video in YouTube's October
+   2026 side-rail layout. #secondary is the right-hand column itself (the
+   description/comments panel in the new layout). The side rail is the
+   Description / Comments / Ask strip at the right edge. */
 html[data-ytfm-hide-suggested] :is(ytd-watch-flexy, ytd-watch-grid) #secondary,
 html[data-ytfm-hide-suggested] :is(ytd-watch-flexy, ytd-watch-grid) #related,
 html[data-ytfm-hide-suggested] ytd-watch-next-secondary-results-renderer,
+html[data-ytfm-hide-suggested] .ytSideRailViewModelHost,
+html[data-ytfm-hide-suggested] yt-side-rail-view-model,
 html[data-ytfm-hide-suggested] #movie_player .html5-endscreen,
 html[data-ytfm-hide-suggested] #movie_player .ytp-fullscreen-grid-stills-container {
 	display: none !important;
 }
 
-/* Keep the video centred once the right-hand column is gone. */
-html[data-ytfm-hide-suggested] ytd-watch-flexy #columns {
+/* Cinema view: with nothing left beside it, the video is sized to fill the
+   window below the search bar and centred, with the title and everything
+   else below the fold. #primary keeps the full width so YouTube's ambient
+   glow has room at the sides. Theater and full screen keep YouTube's own
+   layout. */
+html[data-ytfm-hide-suggested] ytd-watch-flexy:not([theater]):not([fullscreen]) {
+	--ytfm-top: var(--ytd-masthead-height, 56px);
+	/* Widest the video can be while fitting the window height, keeping the
+	   video's own aspect ratio (YouTube sets these per video). */
+	--ytfm-video-width: calc(
+		(100vh - var(--ytfm-top) - 48px) *
+		var(--ytd-watch-flexy-width-ratio, 16) / var(--ytd-watch-flexy-height-ratio, 9)
+	);
+	--ytd-watch-flexy-max-player-width: var(--ytfm-video-width) !important;
+	--ytd-watch-flexy-min-player-width: 0px !important;
+	/* Space the new layout reserves for the side rail. */
+	--ytd-watch-flexy-fixed-side-menu-width: 0px !important;
+}
+
+html[data-ytfm-hide-suggested][data-ytfm-focus-mode] ytd-watch-flexy:not([theater]):not([fullscreen]) {
+	--ytfm-top: 0px;
+}
+
+html[data-ytfm-hide-suggested] ytd-watch-flexy:not([theater]):not([fullscreen]) #columns {
 	justify-content: center !important;
+	max-width: none !important;
+	min-width: 0 !important;
+	margin: 0 !important;
+}
+
+html[data-ytfm-hide-suggested] ytd-watch-flexy:not([theater]):not([fullscreen]) #columns::after {
+	display: none !important;
+	width: 0 !important;
+}
+
+html[data-ytfm-hide-suggested] ytd-watch-flexy:not([theater]):not([fullscreen]) #primary {
+	flex: 1 1 auto !important;
+	width: auto !important;
+	max-width: none !important;
+	min-width: 0 !important;
+	margin: 0 !important;
+	padding: 24px 24px 0 !important;
+	box-sizing: border-box !important;
+}
+
+html[data-ytfm-hide-suggested] ytd-watch-flexy:not([theater]):not([fullscreen]) #primary-inner {
+	max-width: var(--ytfm-video-width) !important;
+	margin: 0 auto !important;
+}
+
+html[data-ytfm-hide-suggested] ytd-watch-flexy:not([theater]):not([fullscreen]) #player-container-outer {
+	max-width: none !important;
+	min-width: 0 !important;
+	margin: 0 auto !important;
 }
 
 /* ---------- Hide Sidebar (left navigation) ---------- */
